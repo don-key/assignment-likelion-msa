@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset='utf-8'>
+    <title>Deven Rathod -Free Movie Server</title>
+    <link rel="stylesheet" href="style.css"/>
+    <script src="script.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+
+<div class="c2">
+    <marquee><p>Made With 💙 by Deven </p></marquee>
+</div>
+<body>
+<header>
+    <div class="nav">
+        <hr/>
+        <nav>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="https://api.whatsapp.com/send?phone=+911234567890&text=please%20add%20the%20movie">Request
+                    movie</a></li>
+                <li>
+                    <a href="https://api.whatsapp.com/send?phone=+911234567890&text=want%20to%20contact%20you">Contact</a>
+                </li>
+                <li><a href="/about">About</a></li>
+                <li><a href="/upload">Upload Movies</a></li>
+            </ul>
+        </nav>
+        <hr/>
+    </div>
+    <h1 class="headh1">Welcome To Free Movie Server</h1>
+    <h2 class="headh1">click on Show Button to see all movies</h2>
+    <button id="showCardList" class="nbtn" onclick="filterSelection('all')">Show</button>
+
+    <div style="padding-top: 5px">
+        <span style="color:white">제목 : </span> <input type="text" id="subject"/><br/>
+        <span style="color:white">개봉일 : </span> <input type="text" id="release"/>
+        <button id="createCard" class="nbtn" onclick="create_card()">카드 생성</button>
+    </div>
+</header>
+
+<!-- movie upload code  -->
+<div class="cards">
+
+</div>
+</body>
+
+<script>
+
+    $(function () {
+        get();
+    });
+
+    function get() {
+        axios.get('http://172.30.7.152:30002/api/movies', {}).then(function (response) {
+            $(".cards").html('');
+            for (let i in response.data) {
+                let $id = response.data[i].id;
+                let $subject = response.data[i].subject;
+                let $release = response.data[i].release;
+
+                $(".cards").append(
+                    '<div class="column nature"><div class="content">' +
+                    '<h4>' + $subject + '</h4>' +
+                    '<h4>개봉일 : ' + $release + '</h4>' +
+                    '<button onclick="delete_card(' + $id + ')">삭제</button>' +
+                    '<button onclick="detail_card(' + $id + ')">상세보기</button>' +
+                    '</div></div>'
+                );
+            }
+        }).catch(function (error) {
+            console.log(error);
+        });
+    }
+
+    function create_card() {
+        var subject = $("#subject").val();
+        var release = $("#release").val();
+
+        axios.request({
+            method: 'POST',
+            url: 'http://172.30.7.152:30002/api/movies/',
+            headers: {'Content-type': 'application/json'},
+            data: {
+                subject: subject,
+                release: release
+            }
+        }).then(
+            alert("카드가 생성됐습니다.")
+        ).finally(function () {
+            get();
+            setTimeout(function () {
+                $("#showCardList").click();
+            }, 300);
+        })
+    }
+
+    function delete_card(id) {
+        axios.delete('http://172.30.7.152:30002/api/movies/' + id)
+            .then(function (response) {
+                get();
+                setTimeout(function () {
+                    $("#showCardList").click();
+                }, 300);
+
+            })
+            .catch(function (response) {
+
+            })
+            .then(function () {
+            });
+    }
+
+    function detail_card(id) {
+        window.location.href="detail/"+id;
+    }
+
+</script>
+</html>

@@ -1,0 +1,49 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: spring-ui-v1
+  labels:
+    app: spring-ui-v1
+spec:
+  containers:
+  - name: spring-ui
+    image: rlaehdzlsla/spring-ui
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: spring-ui-v1
+spec:
+  selector:
+    app: spring-ui-v1
+  type: NodePort
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+      nodePort: 30001
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: spring-movie-v1
+  labels:
+    app: spring-movie-v1
+spec:
+  containers:
+  - name: spring-movie
+    image: rlaehdzlsla/spring-movie
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: spring-movie-v1
+spec:
+  selector:
+    app: spring-movie-v1
+  type: NodePort
+  ports:
+    - protocol: TCP
+      port: 8081
+      targetPort: 8081
+      nodePort: 30002

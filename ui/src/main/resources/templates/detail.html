@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset='utf-8'>
+    <title>Deven Rathod -Free Movie Server</title>
+    <link rel="stylesheet" href="/style.css"/>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+
+<div class="c2">
+    <marquee><p>Made With 💙 by Deven </p></marquee>
+</div>
+<body>
+<header>
+    <div class="nav">
+        <hr/>
+        <nav>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="https://api.whatsapp.com/send?phone=+911234567890&text=please%20add%20the%20movie">Request
+                    movie</a></li>
+                <li>
+                    <a href="https://api.whatsapp.com/send?phone=+911234567890&text=want%20to%20contact%20you">Contact</a>
+                </li>
+                <li><a href="/about">About</a></li>
+                <li><a href="/upload">Upload Movies</a></li>
+            </ul>
+        </nav>
+        <hr/>
+    </div>
+    <h1 class="headh1">Welcome To Free Movie Server</h1>
+    <h2 class="headh1">click on Show Button to see all movies</h2>
+    <h3>상세 정보</h3>
+
+    <div id="detail" style="padding-top: 5px; color: white">
+    </div>
+
+    <div style="padding-top: 5px">
+        <span style="color:white">제목 : </span> <input type="text" id="subject"/><br/>
+        <span style="color:white">개봉일 : </span> <input type="text" id="release"/>
+        <button onclick="update_card()">카드 수정</button>
+        <button onclick="home()">홈으로</button>
+    </div>
+</header>
+
+<!-- movie upload code  -->
+<div class="cards">
+
+</div>
+</body>
+
+<script>
+
+    $(function () {
+        get();
+    });
+
+    function get() {
+        let id = window.location.pathname.split("/")[2];
+        axios.get('http://172.30.7.152:30002/api/movies/' + id, {}).then(function (response) {
+            $("#detail").html('');
+            let $id = response.data.id;
+            let $subject = response.data.subject;
+            let $release = response.data.release;
+
+            $("#detail").append(
+                '<h4>제목 : ' + $subject + '</h4>' +
+                '<h4>개봉일 : ' + $release + '</h4>' +
+                '<input type="hidden" id="cardId" value="' + $id + '"/>' +
+                '</div></div>'
+            );
+        }).catch(function (error) {
+            console.log(error);
+        });
+    }
+
+    function update_card() {
+        let id = $("#cardId").val();
+        let subject = $("#subject").val();
+        let release = $("#release").val();
+
+        axios.request({
+            method: 'PUT',
+            url: 'http://172.30.7.152:30002/api/movies/' + id,
+            data: {
+                subject: subject,
+                release: release
+            }
+        }).then(
+            alert("카드가 수정됐습니다.")
+        ).finally(function () {
+            get();
+        })
+    }
+
+    function home() {
+        window.location.href = "/";
+    }
+</script>
+</html>
