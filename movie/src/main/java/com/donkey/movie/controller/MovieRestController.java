@@ -72,7 +72,10 @@ public class MovieRestController {
         int id;
         String subject;
         String release;
-
+        
+        public Movie() {
+        }
+        
         public Movie(int id, String subject, String release) {
             this.id = id;
             this.subject = subject;
